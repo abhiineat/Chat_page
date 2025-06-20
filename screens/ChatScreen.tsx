@@ -66,7 +66,7 @@ import {
       backgroundColor: '#FAFAF5',
     },
     listContent: {
-      paddingVertical: 8,
+      paddingVertical: 12,
     },
   });
   

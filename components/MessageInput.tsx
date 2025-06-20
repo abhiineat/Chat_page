@@ -20,12 +20,25 @@ import {
     const [isMenuVisible, setIsMenuVisible] = useState(false);
   
     const pickImage = async () => {
-      const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      });
-      setIsMenuVisible(false);
-      if (!result.canceled) console.log('Image picked:', result.assets[0]);
-    };
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      
+        if (status !== 'granted') {
+          alert('Camera permission is required!');
+          return;
+        }
+      
+        const result = await ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          quality: 1,
+        });
+      
+        setIsMenuVisible(false);
+      
+        if (!result.canceled) {
+          console.log('Image picked:', result.assets[0]);
+        }
+      };
+      
   
     const pickDocument = async () => {
       const result = await DocumentPicker.getDocumentAsync();
@@ -43,7 +56,7 @@ import {
     };
     const pickVideo = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+
           quality: 1,
         });
         setIsMenuVisible(false);
@@ -80,23 +93,28 @@ import {
         )}
   
         {/* Input Row */}
-        <TextInput
-          value={message}
-          onChangeText={setMessage}
-          placeholder="Type a message..."
-          style={styles.input}
-          placeholderTextColor="#888"
-        />
-        <TouchableOpacity onPress={() => setIsMenuVisible(!isMenuVisible)}>
-          <Image source={clipIcon} style={styles.icon} resizeMode="contain" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleSend} >
-          <Image
-            source={require('../assets/images/send.png')}
-            style={[styles.icon, ]}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
+        <View style={styles.inputWrapper}>
+  <TextInput
+    value={message}
+    onChangeText={setMessage}
+    placeholder="Reply to @Rohit Yadav"
+    style={styles.input}
+    placeholderTextColor="#888"
+  />
+  <View style={styles.inputIcons}>
+    <TouchableOpacity onPress={() => setIsMenuVisible(!isMenuVisible)}>
+      <Image source={clipIcon} style={styles.icon} resizeMode="contain" />
+    </TouchableOpacity>
+    <TouchableOpacity onPress={handleSend}>
+      <Image
+        source={require('../assets/images/send.png')}
+        style={styles.icon}
+        resizeMode="contain"
+      />
+    </TouchableOpacity>
+  </View>
+</View>
+
       </View>
     );
   }
@@ -105,21 +123,34 @@ import {
     container: {
       flexDirection: 'row',
       paddingHorizontal: 12,
-      paddingVertical: 8,
+      paddingBottom: 28,
       borderTopWidth: 1,
-      borderColor: '#e5e7eb',
-      backgroundColor: '#ffffff',
+      borderColor: '#FAF9F4',
+      backgroundColor: '#FAF9F4',
       alignItems: 'center',
       gap: 8,
     },
-    input: {
-      flex: 1,
-      backgroundColor: '#f2f2f2',
-      borderRadius: 20,
-      paddingHorizontal: 16,
-      paddingVertical: 10,
-      fontSize: 16,
-    },
+    inputWrapper: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#ffffff', // or #f8f7f2 to match screenshot
+        borderRadius: 16,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+      },
+      input: {
+        flex: 1,
+        fontSize: 15,
+        paddingRight: 8,
+        color: '#111',
+      },
+      inputIcons: {
+        flexDirection: 'row',
+        gap: 12,
+      },
+      
+    
     
     icon: {
       width: 20,
